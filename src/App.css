@@ -1,38 +1,72 @@
-.App {
+*{
+  margin: 0;
+  padding: 0;
+}
+body{
+  padding-top: 65px;
+  width: 100vw;
+  
+}
+/* NAVBAR  AREA*/
+.navbar{
+  position:fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 45px;
+  background-color: black;
+  
+}
+.navbarul{
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: space-around;
+  
+}
+.navli{
+  list-style: none;
+}
+.navli a {
+  text-decoration: none;
+  color: white;
+}
+.links:hover{
+color: dodgerblue;
+}
+
+
+/* EMOJI */
+.reactionButton{
+  border: none;
+  background-color: white;
+  margin-right: 20px;
+
+}
+
+/* CreatePost */
+.formArea{
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* POSTS */
+h2{
+  text-align: center;
+  margin-top: 30px;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.postdiv{
+  text-align: center;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction:column;
+}
+.singlePost{
+  text-align: center;
+  align-items: center;
+  margin-top: 30px;
+  border: 1px solid black;
+  width: 700px;
+  height: 150px;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
