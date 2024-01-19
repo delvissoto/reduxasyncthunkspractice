@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 
-import { postAdded } from "./postsSlice";
+import { addNewPost } from "./postsSlice";
 import { selectAllUsers } from "../users/userslice";
 
 const AddPostForm = () => {
@@ -9,22 +9,31 @@ const dispatch = useDispatch();
 const [title, setTitle] = useState("");
 const [content, setContent] = useState("");
 const [userId, setUserId] = useState("");
+const [addRequestStatus, setAddRequestStatus] = useState("idle");
 
 
 const users = useSelector(selectAllUsers);
 
+const canSave =[title, content, userId].every(Boolean) && addRequestStatus === 'idle';// gets applied to the submit button . verifies to see if it is true that it has been entered or selected. 
+
 const onSavePostClicked = (e) =>{
     e. preventDefault()
-    if (title && content){ 
-        dispatch(
-            postAdded(title, content, userId) // here we will just add the input form from the useState and will be rest will just be handle with our prepared callback. 
-        )
-        setTitle('')
-        setContent("")
+    if(canSave){
+        try{
+            setAddRequestStatus('pending')
+            dispatch(addNewPost({title, body: content, userId})).unwrap()
+
+            setTitle("")
+            setContent("")
+            setUserId("")
+        }catch(err){
+            console.error('Failed to save the post', err)
+        }finally{
+            setAddRequestStatus('idle')
+        }
     }
 }
 
-const canSave = Boolean(title) && Boolean(content) && Boolean(userId) // gets applied to the submit button . verifies to see if it is true that it has been entered or selected. 
 
 const userOptions = users.map(user =>( // this will display a option of users that we can select to apply it to the post. 
     <option key={user.id} value={user.id}>

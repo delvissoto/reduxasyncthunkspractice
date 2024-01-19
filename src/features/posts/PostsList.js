@@ -1,31 +1,38 @@
-import { useSelector } from "react-redux";
-import { selectAllPosts } from "./postsSlice";
-import PostAuthors from "./PostAuthors";
-import TimeAgo from "./TimeAgo";
-import ReactionButtons from "./reactionButton";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { selectAllPosts, getPostStatus, getPostError, fetchPosts } from "./postsSlice";
+import PostExcerpt from "./PostExcerpt";
+
 
 
 const PostsList = () => {
+  const dispatch = useDispatch();
   const posts = useSelector(selectAllPosts) // here we are grabing the posts form postslice  with useSelector 
+  const postsStatus = useSelector(getPostStatus)
+  const postsError = useSelector(getPostError)
 
-  const orderedPosts = posts.slice().sort((a, b) =>b.date.localeCompare(a.date)) // this allows the array to be sorted by creating a copy of the posts array sorted. 
+
+  useEffect(() => {
+    if (postsStatus === 'idle') {
+      dispatch(fetchPosts())
+    }
+  }, [postsStatus, dispatch])
+
+  let content;
+  if(postsStatus ==='loading'){
+    content = <p>"Loading..."</p>;
+  }else if (postsStatus === "succeeded"){
+    const orderedPost = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
+    content = orderedPost.map((post, index)=> <PostExcerpt key={index} post={post}/>)  // Dont forget the index if i dot want to see duplicates. 
+  }else if (postsStatus === 'failed'){
+    content = <p>{postsError}</p>;
+  }
 
 
-  const renderPost = orderedPosts.map(post =>(   // here we are mapping throught posts grabing the reducers to be mapped and render. 
-    <article key={post.id} className="singlePost">
-      <h3>{post.title}</h3>
-      <p>{post.content.substring(0,100)}</p>
-      <p>
-      <PostAuthors userId={post.userId}/>
-      <TimeAgo timestamp={post.date}/>
-      </p>
-      <ReactionButtons post={post}/>
-    </article>
-  ))
   return (
     <div className="postdiv">
       <h2>POSTS</h2>
-      {renderPost}
+      {content}
     </div>
   )
 }

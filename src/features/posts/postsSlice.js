@@ -22,6 +22,16 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () =>{
     }
 })
 
+export const addNewPost = createAsyncThunk('posts/addNewPost', async (initialPost) =>{
+    try{
+        const response= await axios.post(POSTS_URL, initialPost)
+        return response.data;
+
+    }catch (err){
+        return err.message;
+    }
+})
+
 const postsSlice = createSlice({
     name:"posts",
     initialState,
@@ -66,7 +76,7 @@ extraReducers(builder){      //builder parameter is an object that let us defibe
             //Ading date and reactions
             let min = 1;
             const loadedPosts = action.payload.map(post =>{
-                post.date = sub(new Date(), {minutes: min++}).toISOString
+                post.date = sub(new Date(), {minutes: min++}).toISOString();
                 post.reactions= {
                     thumbsUp:0,
                     wow:0,
@@ -83,10 +93,25 @@ extraReducers(builder){      //builder parameter is an object that let us defibe
             state.status = 'failed'
             state.error = action.error.message
         })
+        .addCase(addNewPost.fulfilled, (state, action) => {
+            action.payload.userId = Number(action.payload.userId)
+            action.payload.date = new Date().toISOString();
+            action.payload.reactions = {
+                thumbsUp:0,
+                wow:0,
+                heart:0,
+                rocket:0,
+                coffee:0
+            }
+            console.log(action.payload)
+            state.posts.push(action.payload)
+        })
 }
 });
 
 export const selectAllPosts = (state) => state.posts.posts; // this is used so when the chape of the state ever changes it will only change in the slice and not in every component. 
+export const getPostStatus = (state) => state.posts.status; 
+export const getPostError = (state) => state.posts.error; 
 
 export const {postAdded, reactionAdded} = postsSlice.actions // here is where we export all the actions. 
 
